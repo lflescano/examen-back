@@ -5,11 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UsuarioRepository")
  */
-class Usuario
+class Usuario implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -109,7 +111,7 @@ class Usuario
         return $this->alquileres;
     }
 
-    public function addAlquilere(Alquiler $alquilere): self
+    public function addAlquiler(Alquiler $alquilere): self
     {
         if (!$this->alquileres->contains($alquilere)) {
             $this->alquileres[] = $alquilere;
@@ -119,7 +121,7 @@ class Usuario
         return $this;
     }
 
-    public function removeAlquilere(Alquiler $alquilere): self
+    public function removeAlquiler(Alquiler $alquilere): self
     {
         if ($this->alquileres->contains($alquilere)) {
             $this->alquileres->removeElement($alquilere);
@@ -131,4 +133,9 @@ class Usuario
 
         return $this;
     }
+
+    public function getRoles(){return [];}
+    public function getSalt(){return null;}
+    public function getUsername(){return $this->email;}
+    public function eraseCredentials(){}
 }

@@ -126,15 +126,21 @@ class ApiController extends FOSRestController
             $apellido = $request->request->get('_apellido');
             $email = $request->request->get('_email');
             $password = $request->request->get('_password');
- 
-            $user = new Usuario();
-            $user->setNombre($nombre);
-            $user->setApellido($apellido);
-            $user->setEmail($email);
-            $user->setPassword($encoder->encodePassword($user, $password));
- 
-            $em->persist($user);
-            $em->flush();
+            if(!is_null($nombre) && !is_null($apellido) && !is_null($email) && !is_null($password)){
+                $user = new Usuario();
+                $user->setNombre($nombre);
+                $user->setApellido($apellido);
+                $user->setEmail($email);
+                $user->setPassword($encoder->encodePassword($user, $password));
+     
+                $em->persist($user);
+                $em->flush();
+            }
+            else {
+                $code = 500;
+                $error = true;
+                $message = "Ocurrio un error durante el registro del usuario - Error: Debe completar todos los campos requeridos";
+            }
  
         } catch (Exception $ex) {
             $code = 500;
@@ -163,14 +169,6 @@ class ApiController extends FOSRestController
      *     description="Ocurrio un error al tratar de recuperar los departamentos."
      * )
      *
-     * @SWG\Parameter(
-     *     name="id",
-     *     in="query",
-     *     type="string",
-     *     description="El ID del departamento"
-     * )
-     *
-     *
      * @SWG\Tag(name="Departamentos")
      */
     public function getDepartamentos(Request $request) {
@@ -183,7 +181,6 @@ class ApiController extends FOSRestController
             $code = 200;
             $error = false;
  
-            //$userId = $this->getUser()->getId();
             $departamentos = $em->getRepository("App:Departamento")->findAll();
  
             if (is_null($departamentos)) {
@@ -205,6 +202,108 @@ class ApiController extends FOSRestController
         return new Response($serializer->serialize($response, "json"));
     }
 
+    /**
+     * @Rest\Post("/add/departamento", name="departamento_add", defaults={"_format":"json"})
+     *
+     * @SWG\Response(
+     *     response=201,
+     *     description="El departamento se agrego exitosamente"
+     * )
+     *
+     * @SWG\Response(
+     *     response=500,
+     *     description="Ocurrio un error al tratar de crear el departamento"
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="ubicacion",
+     *     in="body",
+     *     type="string",
+     *     description="La ubicacion",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="ambientes",
+     *     in="body",
+     *     type="string",
+     *     description="Los ambientes",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="metros_cuadrados",
+     *     in="body",
+     *     type="string",
+     *     description="Los metros cuadrados",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="valor_noche",
+     *     in="body",
+     *     type="string",
+     *     description="El valor por noche",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="valor_mes",
+     *     in="body",
+     *     type="string",
+     *     description="El valor por mes",
+     *     schema={}
+     * )
+     *
+     * @SWG\Tag(name="Departamento")
+     */
+    public function addDepartamentoAction(Request $request) {
+        $serializer = $this->get('jms_serializer');
+        $em = $this->getDoctrine()->getManager();
+        $board = [];
+        $message = "";
+ 
+        try {
+           $code = 201;
+           $error = false;
+
+           $ubicacion = $request->request->get('ubicacion');
+           $ambientes = $request->request->get('ambientes');
+           $metros_cuadrados = $request->request->get('metros_cuadrados');
+           $valor_noche = $request->request->get('valor_noche');
+           $valor_mes = $request->request->get('valor_mes');
+ 
+           if (!is_null($ubicacion) && !is_null($ambientes) && !is_null($metros_cuadrados) && !is_null($valor_noche) && !is_null($valor_mes)) {
+               $departamento = new Departamento();
+               $departamento->setUbicacion($ubicacion);
+               $departamento->setAmbientes($ambientes);
+               $departamento->setMetrosCuadrados($metros_cuadrados);
+               $departamento->setValorNoche($valor_noche);
+               $departamento->setValorMes($valor_mes);
+ 
+               $em->persist($departamento);
+               $em->flush();
+ 
+           } else {
+               $code = 500;
+               $error = true;
+               $message = "Ocurrio un error al tratar de crear un departamento - Error: Debe completar todos los campos requeridos";
+           }
+ 
+        } catch (Exception $ex) {
+            $code = 500;
+            $error = true;
+            $message = "Ocurrio un error al tratar de crear un departamento - Error: {$ex->getMessage()}";
+        }
+ 
+        $response = [
+            'code' => $code,
+            'error' => $error,
+            'data' => $code == 201 ? $board : $message,
+        ];
+ 
+        return new Response($serializer->serialize($response, "json"));
+    }
 	/**
      * @Rest\Post("/alquilar", name="alquilar_departamento", defaults={"_format":"json"})
      *
