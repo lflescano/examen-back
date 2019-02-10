@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AlquilerRepository")
+ * @ORM\Table(name="alquiler", indexes={@ORM\Index(name="tipo_idx", columns={"tipo"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="tipo", type="string", length=5)
  * @ORM\DiscriminatorMap({
@@ -18,6 +19,8 @@ abstract class Alquiler
 {
     const ALQ_MEDIO_INICIO = 5;
     const ALQ_MEDIO_FIN = 15;
+    const DESCUENTO_MEDIO = 0.05;
+    const DESCUENTO_PROLONGADO = 0.15;
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -57,8 +60,9 @@ abstract class Alquiler
         if(($cantidad_dias >= $this::ALQ_MEDIO_INICIO)&&($cantidad_dias <= $this::ALQ_MEDIO_FIN))
         {return new AlquilerMedio;}
         if($cantidad_dias > $this::ALQ_MEDIO_FIN){return new AlquilerProlongado;}
-            
     }
+
+    abstract public function getPrecioEstadia();
 
     public function getId(): ?int
     {

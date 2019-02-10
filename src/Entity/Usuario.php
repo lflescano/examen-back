@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class Usuario implements UserInterface
 {
+    const DESCUENTO = 0.05;
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -132,6 +133,23 @@ class Usuario implements UserInterface
         }
 
         return $this;
+    }
+
+    public function tieneAlquilerRealizado(){
+        foreach($this->alquileres as $alquiler){
+            if($alquiler->getFinalizado()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function aplicarDescuento(float $precio){
+        $precio_final = $precio;
+        if($this->tieneAlquilerRealizado()){
+            $precio_final = $precio_final - ($precio_final * Usuario::DESCUENTO);
+        }
+        return $precio_final;
     }
 
     public function getRoles(){return [];}

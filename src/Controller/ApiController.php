@@ -255,12 +255,12 @@ class ApiController extends FOSRestController
      *     schema={}
      * )
      *
-     * @SWG\Tag(name="Departamento")
+     * @SWG\Tag(name="Departamentos")
      */
     public function addDepartamentoAction(Request $request) {
         $serializer = $this->get('jms_serializer');
         $em = $this->getDoctrine()->getManager();
-        $board = [];
+        $departamento = null;
         $message = "";
  
         try {
@@ -299,7 +299,7 @@ class ApiController extends FOSRestController
         $response = [
             'code' => $code,
             'error' => $error,
-            'data' => $code == 201 ? $board : $message,
+            'data' => $code == 201 ? $departamento : $message,
         ];
  
         return new Response($serializer->serialize($response, "json"));
@@ -346,7 +346,7 @@ class ApiController extends FOSRestController
     public function alquilerAction(Request $request) {
         $serializer = $this->get('jms_serializer');
         $em = $this->getDoctrine()->getManager();
-        $task = [];
+        $alquiler = null;
         $message = "";
  
         try {
@@ -386,7 +386,92 @@ class ApiController extends FOSRestController
         $response = [
             'code' => $code,
             'error' => $error,
-            'data' => $code == 201 ? $task : $message,
+            'data' => $code == 201 ? $alquiler : $message,
+        ];
+ 
+        return new Response($serializer->serialize($response, "json"));
+    }
+
+    	/**
+     * @Rest\GET("/calculo_precio", name="calcular_precio", defaults={"_format":"json"})
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Calculo de precio de un alquiler"
+     * )
+     *
+     * @SWG\Response(
+     *     response=500,
+     *     description="Ocurrio un error al calcular el precio del alquiler"
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="fecha_inicio",
+     *     in="body",
+     *     type="date",
+     *     description="La fecha de inicio",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="cantidad_dias",
+     *     in="body",
+     *     type="integer",
+     *     description="La cantidad de dias",
+     *     schema={}
+     * )
+     *
+     * @SWG\Parameter(
+     *     name="departamento_id",
+     *     in="body",
+     *     type="integer",
+     *     description="El ID del departamento alquilado",
+     *     schema={}
+     * )
+     *
+     * @SWG\Tag(name="Alquilar")
+     */
+    public function calcularAction(Request $request) {
+        $serializer = $this->get('jms_serializer');
+        $em = $this->getDoctrine()->getManager();
+        $precio = null;
+        $message = "";
+ 
+        try {
+            $code = 201;
+            $error = false;
+
+            $userId = $this->getUser()->getId();
+
+            $fechaInicio = $request->request->get("fecha_inicio", null);
+            $cantidadDias = $request->request->get("cantidad_dias", null);
+            $departamentoId= $request->request->get("departamento_id", null);
+ 
+            if (!is_null($fechaInicio) && !is_null($cantidadDias) && !is_null($departamentoId)) {
+                $alquiler = Alquiler::getAlquilerConcreto($cantidadDias);
+                $usuario = $em->getRepository("App:Usuario")->find($userId);
+                $departamento = $em->getRepository("App:Departamento")->find($departamentoId);
+                $alquiler->setUsuario($usuario);
+                $alquiler->setDepartamento($departamento);
+                $alquiler->setFechaInicio($fechaInicio);
+                $alquiler->setCantidadDias($cantidadDias);
+ 				$precio = $alquiler->getPrecioEstadia();
+            } else {
+                $code = 500;
+                $error = true;
+                $message = "Ocurrio un error al calcular el precio del alquiler - Error: Debe completar todos los campos requeridos";
+            }
+ 
+        } catch (Exception $ex) {
+            $code = 500;
+            $error = true;
+            $message = "Ocurrio un error al calcular el precio del alquiler - Error: {$ex->getMessage()}";
+        }
+ 
+        $response = [
+            'code' => $code,
+            'error' => $error,
+            'data' => $code == 200 ? $precio : $message,
         ];
  
         return new Response($serializer->serialize($response, "json"));

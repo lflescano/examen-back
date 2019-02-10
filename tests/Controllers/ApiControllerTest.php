@@ -29,7 +29,7 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
-/*
+
     public function testRegistroDatosFaltantes()
     {
     	$client = static::createClient();
@@ -44,7 +44,7 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertEquals(500, $client->getResponse()->getStatusCode());
     }
-*/
+
     public function testAltaDepartamento()
     {
     	$client = static::createClient();
@@ -80,21 +80,14 @@ class ApiControllerTest extends WebTestCase
     {
     	$client = static::createClient();
 
-    	$data = array(
-            '_nombre' => 'Bruce',
-            '_apellido' => 'Wayne',
-            '_email' => 'thebatman@gmail.com',
-            '_password' => 'batpass'
-        );
-
-        $client->request('POST', '/api/registro', $data);
-
         $login = array(
         	'email' => 'thebatman@gmail.com',
             'password' => 'batpass'
         );
 
         $client->request('POST', '/api/login_check', $data);
+
+        $departamentos = $em->getRepository("App:Departamento")->findAll();
 
         //$this->assertEquals(200, $client->getResponse()->getStatusCode());
     }*/
