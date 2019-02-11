@@ -36,7 +36,6 @@ class ApiControllerTest extends WebTestCase
 
     	$data = array(
             '_nombre' => 'Bruce',
-            '_email' => 'thebatman@gmail.com',
             '_password' => 'batpass'
         );
 
