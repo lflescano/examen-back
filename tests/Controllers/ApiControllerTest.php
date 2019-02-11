@@ -30,7 +30,7 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testRegistroDatosFaltantes()
+    /*public function testRegistroDatosFaltantes()
     {
     	$client = static::createClient();
 
@@ -42,7 +42,7 @@ class ApiControllerTest extends WebTestCase
         $client->request('POST', '/api/registro', $data);
 
         $this->assertEquals(500, $client->getResponse()->getStatusCode());
-    }
+    }*/
 
     public function testAltaDepartamento()
     {
@@ -61,7 +61,7 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    public function testAltaDepartamentoDatosFaltantes()
+    /*public function testAltaDepartamentoDatosFaltantes()
     {
     	$client = static::createClient();
 
@@ -74,7 +74,7 @@ class ApiControllerTest extends WebTestCase
         $client->request('POST', '/api/add/departamento', $data);
 
         $this->assertEquals(500, $client->getResponse()->getStatusCode());
-    }
+    }*/
     /*public function testAlquiler()
     {
     	$client = static::createClient();

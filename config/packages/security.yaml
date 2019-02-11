@@ -14,7 +14,10 @@ security:
             pattern:  ^/api/login
             stateless: true
             anonymous: true
-            form_login:
+            #form_login:
+            json_login:
+                #username_parameter:       _email
+                username_path: _email
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
