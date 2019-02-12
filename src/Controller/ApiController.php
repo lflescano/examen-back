@@ -329,7 +329,7 @@ class ApiController extends FOSRestController
                 $departamento = $em->getRepository("App:Departamento")->find($departamentoId);
                 $alquiler->setUsuario($usuario);
                 $alquiler->setDepartamento($departamento);
-                $alquiler->setFechaInicio($fechaInicio);
+                $alquiler->setFechaInicio(\DateTime::createFromFormat('d/m/Y', $fechaInicio));
                 $alquiler->setCantidadDias($cantidadDias);
  
                 $em->persist($alquiler);
@@ -357,7 +357,7 @@ class ApiController extends FOSRestController
     }
 
     	/**
-     * @Rest\GET("/alquilar/calculo_precio", name="calcular_precio", defaults={"_format":"json"})
+     * @Rest\POST("/alquilar/calculo_precio", name="calcular_precio", defaults={"_format":"json"})
      *
      * @SWG\Response(
      *     response=200,
@@ -402,7 +402,7 @@ class ApiController extends FOSRestController
         $message = "";
  
         try {
-            $code = 201;
+            $code = 200;
             $error = false;
 
             $userId = $this->getUser()->getId();
@@ -417,7 +417,7 @@ class ApiController extends FOSRestController
                 $departamento = $em->getRepository("App:Departamento")->find($departamentoId);
                 $alquiler->setUsuario($usuario);
                 $alquiler->setDepartamento($departamento);
-                $alquiler->setFechaInicio($fechaInicio);
+                $alquiler->setFechaInicio(\DateTime::createFromFormat('d/m/Y', $fechaInicio));
                 $alquiler->setCantidadDias($cantidadDias);
  				$precio = $alquiler->getPrecioEstadia();
             } else {
@@ -435,7 +435,7 @@ class ApiController extends FOSRestController
         $response = [
             'code' => $code,
             'error' => $error,
-            'data' => $code == 200 ? $precio : $message,
+            'data' => $code == 200 ? ['precio' => $precio] : $message,
         ];
  
         return new Response($serializer->serialize($response, "json"));

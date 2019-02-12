@@ -55,11 +55,11 @@ abstract class Alquiler
      */
     private $finalizado;
 
-    protected function getAlquilerConcreto($cantidad_dias): Alquiler{
-        if($cantidad_dias < $this::ALQ_MEDIO_INICIO){return new AlquilerReducido;}
-        if(($cantidad_dias >= $this::ALQ_MEDIO_INICIO)&&($cantidad_dias <= $this::ALQ_MEDIO_FIN))
-        {return new AlquilerMedio;}
-        if($cantidad_dias > $this::ALQ_MEDIO_FIN){return new AlquilerProlongado;}
+    public function getAlquilerConcreto($cantidad_dias): Alquiler{
+        if($cantidad_dias < Alquiler::ALQ_MEDIO_INICIO){return new AlquilerReducido();}
+        if(($cantidad_dias >= Alquiler::ALQ_MEDIO_INICIO)&&($cantidad_dias <= Alquiler::ALQ_MEDIO_FIN))
+        {return new AlquilerMedio();}
+        if($cantidad_dias > Alquiler::ALQ_MEDIO_FIN){return new AlquilerProlongado();}
     }
 
     abstract public function getPrecioEstadia();

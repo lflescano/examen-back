@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 class AlquilerProlongado extends Alquiler
 {
     public function getPrecioEstadia(){
-        $precio = intdiv($this->cantidad_dias, 30) * $this->getDepartamento()->getValorMes();
-        $precio += ($this->cantidad_dias % 30) * $this->getDepartamento()->getValorNoche();
+        $precio = intdiv($this->getCantidadDias(), 30) * $this->getDepartamento()->getValorMes();
+        $precio += ($this->getCantidadDias() % 30) * $this->getDepartamento()->getValorNoche();
         $precio = $precio - ($precio * Alquiler::DESCUENTO_PROLONGADO);
-        return $this->getUsuario()->aplicarDescuentos($precio);
+        return $this->getUsuario()->aplicarDescuento($precio);
     }
 }

@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AlquilerReducido extends Alquiler
 {
 	public function getPrecioEstadia(){
-		$precio = $this->cantidad_dias * $this->getDepartamento()->getValorNoche();
-		return $this->getUsuario()->aplicarDescuentos($precio);
+		$precio = $this->getCantidadDias() * $this->getDepartamento()->getValorNoche();
+		return $this->getUsuario()->aplicarDescuento($precio);
 	}
 }

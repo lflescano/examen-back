@@ -30,20 +30,6 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    /*public function testRegistroDatosFaltantes()
-    {
-    	$client = static::createClient();
-
-    	$data = array(
-            '_nombre' => 'Bruce',
-            '_password' => 'batpass'
-        );
-
-        $client->request('POST', '/api/registro', $data);
-
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
-    }*/
-
     public function testAltaDepartamento()
     {
     	$client = static::createClient();
@@ -61,33 +47,82 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
-    /*public function testAltaDepartamentoDatosFaltantes()
-    {
-    	$client = static::createClient();
-
-    	$data = array(
-            'ubicacion' => 'Avenida los Arrayanes 801, Lago Puelo, Chubut',
-            'valor_noche' => '650',
-            'valor_mes' => '15000'
-        );
-
-        $client->request('POST', '/api/add/departamento', $data);
-
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
-    }*/
-    /*public function testAlquiler()
+    public function testCalculoAlquiler()
     {
     	$client = static::createClient();
 
         $login = array(
-        	'email' => 'thebatman@gmail.com',
-            'password' => 'batpass'
+        	'_email' => 'thebatman@gmail.com',
+            '_password' => 'batpass'
         );
 
-        $client->request('POST', '/api/login_check', $data);
+        $client->request(
+                'POST', 
+                '/api/login_check',
+                $login,
+                array(),
+                array(
+                    'Content-Type' => 'application/json'
+                )   
+        );
+        $responseData = json_decode($client->getResponse()->getContent(), true);
 
-        $departamentos = $em->getRepository("App:Departamento")->findAll();
+        $alquiler = array(
+            'fecha_inicio' => '25/03/2019',
+            'cantidad_dias' => '15',
+            'departamento_id' => '1'
+        );
 
-        //$this->assertEquals(200, $client->getResponse()->getStatusCode());
-    }*/
+        $client->request(
+            'POST',
+            '/api/alquilar/calculo_precio',
+            $alquiler,
+            array(),
+            array(
+                'Authorization' => 'Bearer '.$responseData['token']
+            )
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    }
+
+    public function testAlquiler()
+    {
+        $client = static::createClient();
+
+        $login = array(
+            '_email' => 'thebatman@gmail.com',
+            '_password' => 'batpass'
+        );
+
+        $client->request(
+                'POST', 
+                '/api/login_check',
+                $login,
+                array(),
+                array(
+                    'Content-Type' => 'application/json'
+                )   
+        );
+        $responseData = json_decode($client->getResponse()->getContent(), true);
+
+        $alquiler = array(
+            'fecha_inicio' => '25/03/2019',
+            'cantidad_dias' => '15',
+            'departamento_id' => '1'
+        );
+
+        $client->request(
+            'POST',
+            '/api/alquilar/calculo_precio',
+            $alquiler,
+            array(),
+            array(
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer '.$responseData['token']
+            )
+        );
+
+        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    }
 }
