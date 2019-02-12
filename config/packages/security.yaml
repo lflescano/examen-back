@@ -8,33 +8,48 @@ security:
             entity:
                 class: App\Entity\Usuario
                 property: email
- 
     firewalls:
         login:
             pattern:  ^/api/login
             stateless: true
             anonymous: true
-            #form_login:
             json_login:
-                #username_parameter:       _email
                 username_path: _email
+                password_path: _password
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
-                require_previous_session: false
- 
-        api:
-            pattern:   ^/api/v1
-            stateless: true
-            anonymous: false
             provider: api_user_provider
+
+        api:
+            pattern:   ^/api
+            stateless: true
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
- 
+            provider: api_user_provider
+        #login:
+            #pattern:  ^/api/login
+            #stateless: true
+            #anonymous: true
+            #json_login:
+                #username_path: _email
+                #check_path:               /api/login_check
+                #success_handler:          lexik_jwt_authentication.handler.authentication_success
+                #failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+                #require_previous_session: false
+        #api:
+            #pattern:   ^/api/alquilar
+            #stateless: true
+            #anonymous: false
+            #provider: api_user_provider
+            #guard:
+                #authenticators:
+                    #- lexik_jwt_authentication.jwt_token_authenticator
     access_control:
-        - { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/api/login_check, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/api/alquilar,       roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/v1,       roles: IS_AUTHENTICATED_FULLY }
- 
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }

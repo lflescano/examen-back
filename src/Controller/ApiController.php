@@ -22,7 +22,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
- 
 /**
  * Class ApiController
  *
@@ -30,41 +29,6 @@ use Swagger\Annotations as SWG;
  */
 class ApiController extends FOSRestController
 {
- 
-    /**
-     * @Rest\Post("/login_check", name="user_login_check")
-     *
-     * @SWG\Response(
-     *     response=200,
-     *     description="Usuario logeado exitosamente"
-     * )
-     *
-     * @SWG\Response(
-     *     response=500,
-     *     description="El usuario no pudo iniciar sesion"
-     * )
-     *
-     * @SWG\Parameter(
-     *     name="_email",
-     *     in="body",
-     *     type="string",
-     *     description="El email",
-     *     schema={
-     *     }
-     * )
-     *
-     * @SWG\Parameter(
-     *     name="_password",
-     *     in="body",
-     *     type="string",
-     *     description="El password",
-     *     schema={}
-     * )
-     *
-     * @SWG\Tag(name="Usuario")
-     */
-    public function loginCheckAction() {}
- 
     /**
      * @Rest\Post("/registro", name="user_register")
      *
@@ -393,7 +357,7 @@ class ApiController extends FOSRestController
     }
 
     	/**
-     * @Rest\GET("/calculo_precio", name="calcular_precio", defaults={"_format":"json"})
+     * @Rest\GET("/alquilar/calculo_precio", name="calcular_precio", defaults={"_format":"json"})
      *
      * @SWG\Response(
      *     response=200,

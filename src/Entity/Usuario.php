@@ -152,7 +152,7 @@ class Usuario implements UserInterface
         return $precio_final;
     }
 
-    public function getRoles(){return [];}
+    public function getRoles(){return ["ROLE_USER"];}
     public function getSalt(){return null;}
     public function getUsername(){return $this->email;}
     public function eraseCredentials(){}
