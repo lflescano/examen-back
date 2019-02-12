@@ -51,19 +51,13 @@ class ApiControllerTest extends WebTestCase
     {
     	$client = static::createClient();
 
-        $login = array(
-        	'_email' => 'thebatman@gmail.com',
-            '_password' => 'batpass'
-        );
-
         $client->request(
-                'POST', 
-                '/api/login_check',
-                $login,
-                array(),
-                array(
-                    'Content-Type' => 'application/json'
-                )   
+            'POST',
+            '/api/login_check',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"_email":"thebatman@gmail.com","_password":"batpass"}'
         );
         $responseData = json_decode($client->getResponse()->getContent(), true);
 
@@ -72,17 +66,14 @@ class ApiControllerTest extends WebTestCase
             'cantidad_dias' => '15',
             'departamento_id' => '1'
         );
-
+        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $responseData['token']));
         $client->request(
             'POST',
             '/api/alquilar/calculo_precio',
             $alquiler,
-            array(),
-            array(
-                'Authorization' => 'Bearer '.$responseData['token']
-            )
+            [],
+            ['CONTENT_TYPE' => 'application/json']
         );
-
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 
@@ -90,19 +81,13 @@ class ApiControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $login = array(
-            '_email' => 'thebatman@gmail.com',
-            '_password' => 'batpass'
-        );
-
         $client->request(
-                'POST', 
-                '/api/login_check',
-                $login,
-                array(),
-                array(
-                    'Content-Type' => 'application/json'
-                )   
+            'POST',
+            '/api/login_check',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+            '{"_email":"thebatman@gmail.com","_password":"batpass"}'
         );
         $responseData = json_decode($client->getResponse()->getContent(), true);
 
@@ -111,18 +96,15 @@ class ApiControllerTest extends WebTestCase
             'cantidad_dias' => '15',
             'departamento_id' => '1'
         );
-
+        $client->setServerParameter('HTTP_Authorization', sprintf('Bearer %s', $responseData['token']));
         $client->request(
             'POST',
-            '/api/alquilar/calculo_precio',
+            '/api/alquilar',
             $alquiler,
-            array(),
-            array(
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer '.$responseData['token']
-            )
+            [],
+            ['CONTENT_TYPE' => 'application/json']
         );
 
-        $this->assertEquals(201, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 }
